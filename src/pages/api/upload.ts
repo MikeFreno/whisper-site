@@ -9,12 +9,9 @@ export const config = {
   },
 };
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const base64 = req.body;
-  const filename = req.query.name;
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  const base64 = req.body as string;
+  const filename = req.query.name as string;
 
   const imageBuffer = Buffer.from(base64, "base64");
 

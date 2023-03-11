@@ -4,7 +4,6 @@ import SpinIcon from "@/icons/SpinIcon";
 import SpinnerIcon from "@/icons/SpinnerIcon";
 import { useCallback, useRef, useState } from "react";
 import Dropzone from "./Dropzone";
-import { api } from "@/utils/api";
 import CopyIcon from "@/icons/CopyIcon";
 
 export default function FileSelect() {
@@ -46,50 +45,46 @@ export default function FileSelect() {
       }
     });
   }, []);
-
-  async function sendFileToServer() {
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  const sendFileToServer = async () => {
     setFileUploading(true);
-    try {
-      const response = await fetch(`/api/upload?name=${file?.name}`, {
-        method: "POST",
-        body: fileData,
-      });
-      console.log(response);
-      setUploadProgress(true);
-      processFile();
-    } catch (error) {}
-  }
+
+    const response = await fetch(`/api/upload?name=${file?.name as string}`, {
+      method: "POST",
+      body: fileData,
+    });
+    console.log(response);
+    setUploadProgress(true);
+    await processFile();
+  };
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   async function processFile() {
-    try {
-      const response = await fetch(`/api/process?name=${file?.name}`, {
-        method: "GET",
-      });
-      if (response.body) {
-        const reader = response.body.getReader();
+    const response = await fetch(`/api/process?name=${file?.name as string}`, {
+      method: "GET",
+    });
+    if (response.body) {
+      const reader = response.body.getReader();
 
-        const decoder = new TextDecoder();
-        let data = "";
+      const decoder = new TextDecoder();
+      let data = "";
 
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          data += decoder.decode(value);
-        }
-        setFileProcessed(true);
-        setOutput(data);
-        setUploadProgress(false);
-        setFileUploading(false);
-      } else {
-        alert("error processing file");
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        data += decoder.decode(value);
       }
-    } catch (error) {
-      console.log(error);
+      setFileProcessed(true);
+      setOutput(data);
+      setUploadProgress(false);
+      setFileUploading(false);
+    } else {
+      alert("error processing file");
     }
   }
-
-  const copyToClipboard = () => {
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  const copyToClipboard = async () => {
     if (dataArea.current) {
-      navigator.clipboard.writeText(dataArea.current.value);
+      await navigator.clipboard.writeText(dataArea.current.value);
     }
   };
   const saveAsTextFile = () => {
@@ -113,7 +108,7 @@ export default function FileSelect() {
               disabled
               className="flex rounded bg-blue-400 px-4 py-2 hover:bg-blue-500 active:bg-blue-600"
             >
-              Loading...
+              <div className="text-white">Loading...</div>
             </button>
           </div>
         );
@@ -122,6 +117,7 @@ export default function FileSelect() {
           <div className="flex justify-center pt-4">
             <button
               className="flex rounded bg-blue-400 px-4 py-2 hover:bg-blue-500 active:bg-blue-600"
+              //  eslint-disable-next-line @typescript-eslint/no-misused-promises
               onClick={sendFileToServer}
             >
               <SpinIcon height={24} width={24} fill={"#fb923c"} />
@@ -189,7 +185,8 @@ export default function FileSelect() {
               value={output}
             />
             <button
-              className="absolute ml-[60vw] mt-2 lg:ml-[44vw]"
+              className="absolute mt-2 ml-[55vw] lg:ml-[44vw]"
+              // eslint-disable-next-line @typescript-eslint/no-misused-promises
               onClick={copyToClipboard}
             >
               <CopyIcon width={24} height={24} fill={"#60a5fa"} />

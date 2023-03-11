@@ -1,8 +1,5 @@
 import { type NextPage } from "next";
-import Link from "next/link";
-import { signIn, signOut, useSession } from "next-auth/react";
 import FileSelect from "@/components/FileSelect";
-import DataOutput from "@/components/DataOutput";
 
 const Home: NextPage = () => {
   return (
