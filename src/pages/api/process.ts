@@ -1,10 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { spawn } from "child_process";
 import fs from "fs";
+import path from "path";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   // `src/uploads/${req.query.name}`
-  const process = spawn("python", ["main.py"], {
+  const pythonExecutable = path.join("env", "bin", "python");
+  const process = spawn(pythonExecutable, ["main.py"], {
     stdio: ["pipe", "pipe", "pipe"],
   });
   process.stdin.write(`src/uploads/${req.query.name as string}`);
