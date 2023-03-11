@@ -12,7 +12,7 @@ const Dropzone = ({ onDrop, accept, file }: any) => {
   });
   return (
     <div
-      className={`z-50 my-4 flex rounded-full border border-orange-300 bg-transparent shadow-xl`}
+      className={`z-50 my-4 flex rounded-full border border-orange-300 bg-orange-400 shadow-xl hover:brightness-95 active:brightness-90`}
       {...getRootProps()}
     >
       <label
@@ -42,7 +42,9 @@ const Dropzone = ({ onDrop, accept, file }: any) => {
             </>
           )
         ) : (
-          <div>Looks Good!</div>
+          <>
+            <div>Looks Good!</div>
+          </>
         )}
       </label>
     </div>

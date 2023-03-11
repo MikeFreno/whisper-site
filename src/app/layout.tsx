@@ -2,8 +2,7 @@ export const metadata = {
   title: "Transcript",
   description: "Transcribe audio files ",
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/shortcut-icon.png",
+    icon: "/favicon-32x32.png",
     apple: "/apple-touch-icon.png",
   },
 };

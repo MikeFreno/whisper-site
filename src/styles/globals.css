@@ -1,3 +1,32 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.rule-around {
+  display: flex;
+  align-items: center;
+}
+
+.rule-around:before,
+.rule-around:after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid black;
+  margin: 0 10px;
+}
+
+@keyframes spin {
+  to {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spinner {
+  -webkit-animation: spin 1s linear infinite; /* Safari and Chrome */
+  -moz-animation: spin 1s linear infinite; /* Firefox */
+  -ms-animation: spin 1s linear infinite; /* Internet Explorer */
+  -o-animation: spin 1s linear infinite; /* Opera */
+  animation: spin 1s linear infinite;
+}

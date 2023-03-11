@@ -1,16 +1,25 @@
 "use client";
 
 import SpinIcon from "@/icons/SpinIcon";
-import { useCallback, useState } from "react";
+import SpinnerIcon from "@/icons/SpinnerIcon";
+import { useCallback, useRef, useState } from "react";
 import Dropzone from "./Dropzone";
+import { api } from "@/utils/api";
+import CopyIcon from "@/icons/CopyIcon";
 
 export default function FileSelect() {
-  const [file, setFile] = useState<File | null>(null);
+  const [file, setFile] = useState<File | Blob | null>(null);
   const [fileRejected, setFileRejected] = useState<boolean>(false);
+  const [fileUploading, setFileUploading] = useState<boolean>(false);
+  const [fileData, setFileData] = useState<string | ArrayBuffer | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<boolean>(false);
+  const [ext, setExt] = useState<string>("");
+  const [output, setOutput] = useState<string>("");
+  const dataArea = useRef<HTMLTextAreaElement | null>(null);
+  const [fileProcessed, setFileProcessed] = useState<boolean>(false);
 
-  const handleFileDrop = useCallback((acceptedFiles: File[]) => {
-    acceptedFiles.forEach((file: File) => {
-      setFile(file);
+  const handleFileDrop = useCallback((acceptedFiles: Blob[]) => {
+    acceptedFiles.forEach((file: Blob) => {
       const ext = file.type.split("/")[1];
       if (
         ext === "m4a" ||
@@ -21,18 +30,108 @@ export default function FileSelect() {
         ext === "wav" ||
         ext === "webm"
       ) {
-        setFileRejected(false);
+        setFile(file);
+        const ext = file.type.split("/")[1];
+        setExt(ext!);
         const reader = new FileReader();
         reader.onload = () => {
           const str = reader.result;
+          setFileData(str);
         };
         reader.readAsDataURL(file);
+        setFileRejected(false);
       } else {
         setFile(null);
         setFileRejected(true);
       }
     });
   }, []);
+
+  async function sendFileToServer() {
+    setFileUploading(true);
+    try {
+      const response = await fetch(`/api/upload?name=${file?.name}`, {
+        method: "POST",
+        body: fileData,
+      });
+      console.log(response);
+      setUploadProgress(true);
+      processFile();
+    } catch (error) {}
+  }
+  async function processFile() {
+    try {
+      const response = await fetch(`/api/process?name=${file?.name}`, {
+        method: "GET",
+      });
+      if (response.body) {
+        const reader = response.body.getReader();
+
+        const decoder = new TextDecoder();
+        let data = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          data += decoder.decode(value);
+        }
+        setFileProcessed(true);
+        setOutput(data);
+        setUploadProgress(false);
+        setFileUploading(false);
+      } else {
+        alert("error processing file");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const copyToClipboard = () => {
+    if (dataArea.current) {
+      navigator.clipboard.writeText(dataArea.current.value);
+    }
+  };
+  const saveAsTextFile = () => {
+    if (dataArea.current) {
+      const toSave = dataArea.current.value;
+      const blob = new Blob([toSave], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "my-transcript.txt";
+      a.click();
+    }
+  };
+
+  const buttonState = () => {
+    if (file !== null) {
+      if (fileUploading) {
+        return (
+          <div className="flex justify-center pt-4">
+            <button
+              disabled
+              className="flex rounded bg-blue-400 px-4 py-2 hover:bg-blue-500 active:bg-blue-600"
+            >
+              Loading...
+            </button>
+          </div>
+        );
+      } else {
+        return (
+          <div className="flex justify-center pt-4">
+            <button
+              className="flex rounded bg-blue-400 px-4 py-2 hover:bg-blue-500 active:bg-blue-600"
+              onClick={sendFileToServer}
+            >
+              <SpinIcon height={24} width={24} fill={"#fb923c"} />
+              <div className="pl-2 text-white">Transcribe!</div>
+            </button>
+          </div>
+        );
+      }
+    }
+  };
 
   return (
     <>
@@ -41,7 +140,6 @@ export default function FileSelect() {
           Select File...
         </button> */}
         <div className="">
-          <div className="text-center">Server Logo (optional)</div>
           <Dropzone
             onDrop={handleFileDrop}
             acceptedFiles={
@@ -53,19 +151,60 @@ export default function FileSelect() {
         </div>
       </div>
       <div className="text-center">
-        {fileRejected
-          ? "File type rejected"
-          : file == null
-          ? "No file selected..."
-          : file.name}
+        {fileRejected ? (
+          "File type rejected"
+        ) : file == null ? (
+          "No file selected..."
+        ) : (
+          <div className="underline underline-offset-[6px]">{file.name}</div>
+        )}
       </div>
-      {file !== null ? (
-        <div className="flex justify-center pt-4">
-          <button className="flex rounded bg-blue-400 px-4 py-2">
-            <SpinIcon height={24} width={24} fill={"#fb923c"} />
-            <div className="pl-2 text-white">Transcribe!</div>
-          </button>
-        </div>
+      {buttonState()}
+      {fileUploading ? (
+        <>
+          <div className="my-4 flex justify-center">
+            <div className="animate-spinner">
+              <SpinnerIcon height={64} width={64} fill={"#60a5fa"} />
+            </div>
+          </div>
+          {uploadProgress ? (
+            <div className="text-center italic">
+              File uploaded, processing...
+            </div>
+          ) : (
+            <div className="text-center italic">File uploading...</div>
+          )}
+        </>
+      ) : null}
+      {uploadProgress || fileProcessed ? (
+        <>
+          <div className="flex justify-center pt-8">
+            <textarea
+              ref={dataArea}
+              id="output"
+              className="flex w-3/4 rounded-md py-4 pl-6 pr-12 shadow-lg lg:w-1/2"
+              placeholder="output will appear here"
+              rows={10}
+              onChange={(e) => setOutput(e.target.value)}
+              value={output}
+            />
+            <button
+              className="absolute ml-[60vw] mt-2 lg:ml-[44vw]"
+              onClick={copyToClipboard}
+            >
+              <CopyIcon width={24} height={24} fill={"#60a5fa"} />
+            </button>
+          </div>
+          <div className="rule-around my-4 mx-auto w-3/4 lg:w-1/2">Or</div>
+          <div className="flex justify-center">
+            <button
+              className="rounded-lg bg-blue-400 px-6 py-4 text-xl text-white hover:bg-blue-500 active:bg-blue-600"
+              onClick={saveAsTextFile}
+            >
+              Save as Text File
+            </button>
+          </div>
+        </>
       ) : null}
     </>
   );
