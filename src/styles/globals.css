@@ -24,9 +24,9 @@
 }
 
 .animate-spinner {
-  -webkit-animation: spin 1s linear infinite; /* Safari and Chrome */
-  -moz-animation: spin 1s linear infinite; /* Firefox */
-  -ms-animation: spin 1s linear infinite; /* Internet Explorer */
-  -o-animation: spin 1s linear infinite; /* Opera */
+  -webkit-animation: spin 1s linear infinite;
+  -moz-animation: spin 1s linear infinite;
+  -ms-animation: spin 1s linear infinite;
+  -o-animation: spin 1s linear infinite;
   animation: spin 1s linear infinite;
 }
