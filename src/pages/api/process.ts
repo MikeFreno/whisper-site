@@ -5,10 +5,10 @@ import path from "path";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   // `src/uploads/${req.query.name}`
-  const pythonExecutable = "/vercel/path0/env/bin/python"; //production path
+  // const pythonExecutable = "/vercel/path0/env/bin/python"; //production path
   // const pythonExecutable = path.join("env", "bin", "python"); // dev path
 
-  const process = spawn(pythonExecutable, ["main.py"], {
+  const process = spawn("python", ["main.py"], {
     stdio: ["pipe", "pipe", "pipe"],
   });
   process.stdin.write(`src/uploads/${req.query.name as string}`);
