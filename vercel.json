@@ -1,0 +1,12 @@
+{
+  "builds": [
+    {
+      "src": "api/*.py",
+      "use": "@now/py"
+    },
+    {
+      "src": "package.json",
+      "use": "@now/next"
+    }
+  ]
+}
