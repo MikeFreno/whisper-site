@@ -54,7 +54,7 @@ export default function FileSelect() {
     const response = await fetch(
       `${
         process.env.NEXT_PUBLIC_GCR_API_ROUTE as string
-      }upload?name=${uuidTag}${file?.name as string}`,
+      }/upload?name=${uuidTag}${file?.name as string}`,
       {
         method: "POST",
         body: fileData,
