@@ -5,6 +5,7 @@ import SpinnerIcon from "@/icons/SpinnerIcon";
 import { useCallback, useRef, useState } from "react";
 import Dropzone from "./Dropzone";
 import CopyIcon from "@/icons/CopyIcon";
+import { v4 as uuidv4 } from "uuid";
 
 export default function FileSelect() {
   const [file, setFile] = useState<File | Blob | null>(null);
@@ -16,6 +17,7 @@ export default function FileSelect() {
   const [output, setOutput] = useState<string>("");
   const dataArea = useRef<HTMLTextAreaElement | null>(null);
   const [fileProcessed, setFileProcessed] = useState<boolean>(false);
+  const [uuidTag] = useState<string>(uuidv4());
 
   const handleFileDrop = useCallback((acceptedFiles: Blob[]) => {
     acceptedFiles.forEach((file: Blob) => {
@@ -50,24 +52,23 @@ export default function FileSelect() {
     setFileUploading(true);
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_GCR_API_ROUTE as string}/upload?name=${
-        file?.name as string
-      }`,
+      `${
+        process.env.NEXT_PUBLIC_GCR_API_ROUTE as string
+      }upload?name=${uuidTag}${file?.name as string}`,
       {
         method: "POST",
         body: fileData,
       }
     );
-    console.log(response);
     setUploadProgress(true);
     await processFile();
   };
   //eslint-disable-next-line @typescript-eslint/no-misused-promises
   async function processFile() {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_GCR_API_ROUTE as string}/process?name=${
-        file?.name as string
-      }`,
+      `${
+        process.env.NEXT_PUBLIC_GCR_API_ROUTE as string
+      }/process?name=${uuidTag}${file?.name as string}`,
       {
         method: "GET",
       }
