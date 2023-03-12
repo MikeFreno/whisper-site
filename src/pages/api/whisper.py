@@ -7,14 +7,14 @@ from urllib.parse import urlparse, parse_qs
 class WhisperRequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         # Get the content length and read the request payload
-        parsed_url = urlparse(self.path)
-        query_params = parse_qs(parsed_url.query)
+        # parsed_url = urlparse(self.path)
+        # query_params = parse_qs(parsed_url.query)
         # file_name = query_params.get("file_name")[0]
-        file_name = "Introducing the CHADstack.mp3"
+        file_name = "testing.mp3"
         print(file_name)
         # Decode the request payload from bytes to string
 
-        file_path = f"src/uploads/{file_name}"
+        file_path = f"src/uploads/testing.mp3"
 
         model = whisper.load_model("base")
         result = model.transcribe(file_path, fp16=False, language="English")

@@ -58,45 +58,45 @@ export default function FileSelect() {
     await processFile();
   };
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  // async function processFile() {
-  //   const response = await fetch(`/api/process?name=${file?.name as string}`, {
-  //     method: "GET",
-  //   });
-  //   if (response.body) {
-  //     const reader = response.body.getReader();
+  async function processFile() {
+    const response = await fetch(`/api/process?name=${file?.name as string}`, {
+      method: "GET",
+    });
+    if (response.body) {
+      const reader = response.body.getReader();
 
-  //     const decoder = new TextDecoder();
-  //     let data = "";
+      const decoder = new TextDecoder();
+      let data = "";
 
-  //     while (true) {
-  //       const { done, value } = await reader.read();
-  //       if (done) break;
-  //       data += decoder.decode(value);
-  //     }
-  //     setFileProcessed(true);
-  //     setOutput(data);
-  //     setUploadProgress(false);
-  //     setFileUploading(false);
-  //   } else {
-  //     alert("error processing file");
-  //   }
-  // }
-
-  const processFile = async () => {
-    try {
-      const response = await fetch(
-        `/api/whisper?file_name=${file?.name as string}`,
-        {
-          method: "POST",
-        }
-      );
-      // eslint-disable-next-line  @typescript-eslint/no-unsafe-assignment
-      const data: string = await response.json();
-      console.log(data);
-    } catch (error) {
-      console.error(error);
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        data += decoder.decode(value);
+      }
+      setFileProcessed(true);
+      setOutput(data);
+      setUploadProgress(false);
+      setFileUploading(false);
+    } else {
+      alert("error processing file");
     }
-  };
+  }
+
+  // const processFile = async () => {
+  //   try {
+  //     const response = await fetch(
+  //       `/api/whisper?file_name=${file?.name as string}`,
+  //       {
+  //         method: "POST",
+  //       }
+  //     );
+  //     // eslint-disable-next-line  @typescript-eslint/no-unsafe-assignment
+  //     const data: string = await response.json();
+  //     console.log(data);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   const copyToClipboard = async () => {
@@ -149,9 +149,6 @@ export default function FileSelect() {
   return (
     <>
       <div className="flex justify-center rounded-full pt-4">
-        {/* <button className="rounded-md bg-blue-400 px-4 py-2 text-white">
-          Select File...
-        </button> */}
         <div className="">
           <Dropzone
             onDrop={handleFileDrop}

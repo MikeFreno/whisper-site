@@ -15,9 +15,6 @@ const Home: NextPage = () => {
           </p>
         </div>
         <FileSelect />
-        {/* <div className="">
-          <DataOutput />
-        </div> */}
       </main>
     </>
   );
