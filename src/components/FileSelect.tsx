@@ -49,19 +49,29 @@ export default function FileSelect() {
   const sendFileToServer = async () => {
     setFileUploading(true);
 
-    const response = await fetch(`/api/upload?name=${file?.name as string}`, {
-      method: "POST",
-      body: fileData,
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_GCR_API_ROUTE as string}/api/upload?name=${
+        file?.name as string
+      }`,
+      {
+        method: "POST",
+        body: fileData,
+      }
+    );
     console.log(response);
     setUploadProgress(true);
     await processFile();
   };
   //eslint-disable-next-line @typescript-eslint/no-misused-promises
   async function processFile() {
-    const response = await fetch(`/api/process?name=${file?.name as string}`, {
-      method: "GET",
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_GCR_API_ROUTE as string}/api/process?name=${
+        file?.name as string
+      }`,
+      {
+        method: "GET",
+      }
+    );
     if (response.body) {
       const reader = response.body.getReader();
 
