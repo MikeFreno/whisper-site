@@ -50,7 +50,7 @@ export default function FileSelect() {
     setFileUploading(true);
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_GCR_API_ROUTE as string}/api/upload?name=${
+      `${process.env.NEXT_PUBLIC_GCR_API_ROUTE as string}/upload?name=${
         file?.name as string
       }`,
       {
@@ -65,7 +65,7 @@ export default function FileSelect() {
   //eslint-disable-next-line @typescript-eslint/no-misused-promises
   async function processFile() {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_GCR_API_ROUTE as string}/api/process?name=${
+      `${process.env.NEXT_PUBLIC_GCR_API_ROUTE as string}/process?name=${
         file?.name as string
       }`,
       {
