@@ -89,8 +89,8 @@ export default function FileSelect() {
         body: file?.name as string,
       });
       // eslint-disable-next-line  @typescript-eslint/no-unsafe-assignment
-      const data: string = await response.json();
-      console.log(data);
+      // const data: string = await response.json();
+      console.log(response);
     } catch (error) {
       console.error(error);
     }
