@@ -58,29 +58,46 @@ export default function FileSelect() {
     await processFile();
   };
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  async function processFile() {
-    const response = await fetch(`/api/process?name=${file?.name as string}`, {
-      method: "GET",
-    });
-    if (response.body) {
-      const reader = response.body.getReader();
+  // async function processFile() {
+  //   const response = await fetch(`/api/process?name=${file?.name as string}`, {
+  //     method: "GET",
+  //   });
+  //   if (response.body) {
+  //     const reader = response.body.getReader();
 
-      const decoder = new TextDecoder();
-      let data = "";
+  //     const decoder = new TextDecoder();
+  //     let data = "";
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        data += decoder.decode(value);
-      }
-      setFileProcessed(true);
-      setOutput(data);
-      setUploadProgress(false);
-      setFileUploading(false);
-    } else {
-      alert("error processing file");
+  //     while (true) {
+  //       const { done, value } = await reader.read();
+  //       if (done) break;
+  //       data += decoder.decode(value);
+  //     }
+  //     setFileProcessed(true);
+  //     setOutput(data);
+  //     setUploadProgress(false);
+  //     setFileUploading(false);
+  //   } else {
+  //     alert("error processing file");
+  //   }
+  // }
+
+  const processFile = async () => {
+    try {
+      const response = await fetch(
+        `/api/whisper?file_name=${file?.name as string}`,
+        {
+          method: "POST",
+        }
+      );
+
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error(error);
     }
-  }
+  };
+
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   const copyToClipboard = async () => {
     if (dataArea.current) {
