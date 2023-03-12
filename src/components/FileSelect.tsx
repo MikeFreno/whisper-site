@@ -90,8 +90,8 @@ export default function FileSelect() {
           method: "POST",
         }
       );
-
-      const data = await response.json();
+      // eslint-disable-next-line  @typescript-eslint/no-unsafe-assignment
+      const data: string = await response.json();
       console.log(data);
     } catch (error) {
       console.error(error);
