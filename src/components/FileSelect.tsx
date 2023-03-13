@@ -65,10 +65,10 @@ export default function FileSelect() {
       setProcessReport("File uploaded, processing...");
       setTimeout(() => {
         "This process will take a few minutes...";
-      }, 30000);
+      }, 20000);
       setTimeout(() => {
         "File still processing! Don't reload page...";
-      }, 60000);
+      }, 40000);
       await processFile();
     } catch {
       setFileUploading(false);
