@@ -18,6 +18,7 @@ export default function FileSelect() {
   const dataArea = useRef<HTMLTextAreaElement | null>(null);
   const [fileProcessed, setFileProcessed] = useState<boolean>(false);
   const [uuidTag] = useState<string>(uuidv4());
+  const [processReport, setProcessReport] = useState<string>("");
 
   const handleFileDrop = useCallback((acceptedFiles: Blob[]) => {
     acceptedFiles.forEach((file: Blob) => {
@@ -60,8 +61,21 @@ export default function FileSelect() {
         body: fileData,
       }
     );
-    setUploadProgress(true);
-    await processFile();
+    console.log(response);
+    if (response.ok) {
+      setUploadProgress(true);
+      setProcessReport("File uploaded, processing...");
+      setTimeout(() => {
+        "This process will take a few minutes...";
+      }, 30000);
+      setTimeout(() => {
+        "File still processing! Don't reload page...";
+      }, 60000);
+      await processFile();
+    } else {
+      setFileUploading(false);
+      alert("Error on Upload! Reload the page and try again");
+    }
   };
   //eslint-disable-next-line @typescript-eslint/no-misused-promises
   async function processFile() {
@@ -92,20 +106,6 @@ export default function FileSelect() {
       alert("error processing file");
     }
   }
-
-  // const processFile = async () => {
-  //   try {
-  //     const response = await fetch(`/api/whisper`, {
-  //       method: "POST",
-  //       body: file?.name as string,
-  //     });
-  //     // eslint-disable-next-line  @typescript-eslint/no-unsafe-assignment
-  //     // const data: string = await response.json();
-  //     console.log(response);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   const copyToClipboard = async () => {
@@ -187,9 +187,7 @@ export default function FileSelect() {
             </div>
           </div>
           {uploadProgress ? (
-            <div className="text-center italic">
-              File uploaded, processing...
-            </div>
+            <div className="text-center italic">{processReport}</div>
           ) : (
             <div className="text-center italic">File uploading...</div>
           )}
