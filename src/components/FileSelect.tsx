@@ -51,18 +51,16 @@ export default function FileSelect() {
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   const sendFileToServer = async () => {
     setFileUploading(true);
-
-    const response = await fetch(
-      `${
-        process.env.NEXT_PUBLIC_GCR_API_ROUTE as string
-      }/upload?name=${uuidTag}${file?.name as string}`,
-      {
-        method: "POST",
-        body: fileData,
-      }
-    );
-    console.log(response);
-    if (response.ok) {
+    try {
+      const response = await fetch(
+        `${
+          process.env.NEXT_PUBLIC_GCR_API_ROUTE as string
+        }/upload?name=${uuidTag}${file?.name as string}`,
+        {
+          method: "POST",
+          body: fileData,
+        }
+      );
       setUploadProgress(true);
       setProcessReport("File uploaded, processing...");
       setTimeout(() => {
@@ -72,7 +70,7 @@ export default function FileSelect() {
         "File still processing! Don't reload page...";
       }, 60000);
       await processFile();
-    } else {
+    } catch {
       setFileUploading(false);
       alert("Error on Upload! Reload the page and try again");
     }
